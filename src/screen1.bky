@@ -1,0 +1,135 @@
+<xml xmlns="http://w3.org">
+  <block type="global_declaration" id="var_cameraList" x="10" y="10">
+    <field name="NAME">cameraList</field>
+    <value name="VALUE">
+      <block type="lists_create_with" id="list_empty"></block>
+    </value>
+  </block>
+
+  <block type="global_declaration" id="var_userLatitude" x="10" y="50">
+    <field name="NAME">userLatitude</field>
+    <value name="VALUE">
+      <block type="math_number" id="num_lat_init">
+        <field name="NUM">0</field>
+      </block>
+    </value>
+  </block>
+
+  <block type="global_declaration" id="var_userLongitude" x="10" y="90">
+    <field name="NAME">userLongitude</field>
+    <value name="VALUE">
+      <block type="math_number" id="num_lon_init">
+        <field name="NUM">0</field>
+      </block>
+    </value>
+  </block>
+
+  <block type="component_event" id="evt_location" x="10" y="150">
+    <mutation component_type="LocationSensor" instance_name="LocationSensor1" event_name="LocationChanged" arguments="latitude,longitude,altitude,speed"></mutation>
+    <field name="COMPONENT_SELECTOR">LocationSensor1</field>
+    <statement name="DO">
+      <block type="set_global_var" id="set_lat">
+        <field name="NAME">userLatitude</field>
+        <value name="VALUE">
+          <block type="lexical_variable_get" id="arg_lat">
+            <field name="VAR">latitude</field>
+          </block>
+        </value>
+        <next>
+          <block type="set_global_var" id="set_lon">
+            <field name="NAME">userLongitude</field>
+            <value name="VALUE">
+              <block type="lexical_variable_get" id="arg_lon">
+                <field name="VAR">longitude</field>
+              </block>
+            </value>
+            <next>
+              <block type="component_method" id="call_pan">
+                <mutation component_type="Map" method_name="PanTo" is_generic="false" arguments="3"></mutation>
+                <field name="COMPONENT_SELECTOR">MapCanvas</field>
+                <value name="ARG0">
+                  <block type="lexical_variable_get" id="map_lat">
+                    <field name="VAR">latitude</field>
+                  </block>
+                </value>
+                <value name="ARG1">
+                  <block type="lexical_variable_get" id="map_lon">
+                    <field name="VAR">longitude</field>
+                  </block>
+                </value>
+                <value name="ARG2">
+                  <block type="math_number" id="zoom_level">
+                    <field name="NUM">16</field>
+                  </block>
+                </value>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+
+  <block type="component_event" id="evt_report_click" x="10" y="400">
+    <mutation component_type="Button" instance_name="Button_ReportCamera" event_name="Click" arguments=""></mutation>
+    <field name="COMPONENT_SELECTOR">Button_ReportCamera</field>
+    <statement name="DO">
+      <block type="set_component_property" id="hide_map">
+        <field name="COMPONENT_SELECTOR">VerticalArrangement_MainMap</field>
+        <field name="PROP">Visible</field>
+        <value name="VALUE">
+          <block type="logic_boolean" id="bool_false">
+            <field name="BOOL">FALSE</field>
+          </block>
+        </value>
+        <next>
+          <block type="set_component_property" id="show_form">
+            <field name="COMPONENT_SELECTOR">HorizontalArrangement_FormControls</field>
+            <field name="PROP">Visible</field>
+            <value name="VALUE">
+              <block type="logic_boolean" id="bool_true">
+                <field name="BOOL">TRUE</field>
+              </block>
+            </value>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+
+  <block type="component_event" id="evt_submit_click" x="10" y="600">
+    <mutation component_type="Button" instance_name="Button_SubmitPin" event_name="Click" arguments=""></mutation>
+    <field name="COMPONENT_SELECTOR">Button_SubmitPin</field>
+    <statement name="DO">
+      <block type="controls_if" id="logic_check_match">
+        <value name="IF0">
+          <block type="logic_compare" id="compare_coords">
+            <field name="OP">EQ</field>
+            <value name="A">
+              <block type="logic_boolean" id="mock_match_true">
+                <field name="BOOL">TRUE</field>
+              </block>
+            </value>
+          </block>
+        </value>
+        <statement name="DO0">
+          <block type="component_method" id="trigger_sound">
+            <mutation component_type="Sound" method_name="Play" is_generic="false" arguments="0"></mutation>
+            <field name="COMPONENT_SELECTOR">Sound1</field>
+            <next>
+              <block type="set_component_property" id="display_marker">
+                <field name="COMPONENT_SELECTOR">Marker_ActiveCamera</field>
+                <field name="PROP">Visible</field>
+                <value name="VALUE">
+                  <block type="logic_boolean" id="marker_true">
+                    <field name="BOOL">TRUE</field>
+                  </block>
+                </value>
+              </block>
+            </next>
+          </block>
+        </statement>
+      </block>
+    </statement>
+  </block>
+</xml>
